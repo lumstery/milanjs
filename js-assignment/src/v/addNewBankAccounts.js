@@ -16,7 +16,7 @@ bA.v.addNewBankAccounts= {
             iban: formEl.iban.value,
             bankName: formEl.bankName.value,
             ownerName: formEl.ownerName.value,
-            currentBalance : formEl.currentBalance.value
+            currentBalance : formEl.currentBalance.value,
             openDate : formEl.openDate.value
         };
         Account.add(slots);

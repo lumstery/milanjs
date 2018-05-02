@@ -33,26 +33,9 @@ Account.update = function (slots) {
     if (account.bankName !== slots.bankName) account.bankName = slots.bankName;
     if (account.currentBalance !== slots.currentBalance) account.currentBalance = slots.currentBalance;
     if (account.openDate !== slots.openDate) account.openDate = parseDate(slots.openDate);
-    Account.saveAll();*/*-+-0
+    Account.saveAll();
     console.log("Account " + slots.iban + " modified!");
 };
-
-function parseDate(dateOrString) {
-
-    if (dateOrString instanceof Date) {
-        return dateOrString;
-    }
-    else {
-        var dateWithOutTime=dateOrString ;
-        if (dateOrString.indexOf("T") !==-1) {
-            dateWithOutTime = dateOrString.split("T")[0];
-        }
-        var dateParts = dateWithOutTime.split("-");
-        return new Date(parseInt(dateParts[0]), parseInt(dateParts[1]), parseInt(dateParts[2]))
-
-    }
-
-}
 
 //  Delete a book row from persistent storage
 Account.destroy = function (iban) {
@@ -98,6 +81,34 @@ Account.saveAll = function () {
     if (!error) console.log(nmrOfAccount + "account saved.");
 };
 
+function parseDate(dateOrString) {
+
+    if (dateOrString instanceof Date) {
+        return dateOrString;
+    }
+    else {
+        var dateWithOutTime=dateOrString ;
+        if (dateOrString.indexOf("T") !==-1) {
+            dateWithOutTime = dateOrString.split("T")[0];
+        }
+        var dateParts = dateWithOutTime.split("-");
+        var year  = parseInt(dateParts[0]);
+        var month = normalizeMonth(parseInt(dateParts[1]));
+        var date  = parseInt(dateParts[2]);
+        return createDateAsUTC(new Date(year, month, date, 0, 0, 0));
+
+    }
+
+}
+
+function createDateAsUTC(date) {
+    return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
+}
+
+function convertDateToUTC(date) {
+    return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+}
+
 //  Create and save test data
 Account.createTestData = function () {
     Account.instances["DE89860100900123456789"] = new Account(
@@ -105,7 +116,7 @@ Account.createTestData = function () {
             iban: "DE89860100900123456789",
             bankName: "Postbank Leipzig",
             ownerName: "Hans Meier",
-            openDate: new Date(2009, 5, 12),
+            openDate: createDateAsUTC(new Date(2009, normalizeMonth(5), 12, 0, 0, 0)),
             currentBalance: 200.39
         });
     Account.instances["DE89120700000047114711"] = new Account(
@@ -113,7 +124,7 @@ Account.createTestData = function () {
             iban: "DE89120700000047114711",
             bankName: "Deutsche Account Berlin",
             ownerName: "Hans Meier",
-            openDate: new Date(2011, 11, 11),
+            openDate: createDateAsUTC(new Date(2011, normalizeMonth(11), 11, 0, 0, 0)),
             currentBalance: 1200.55
         });
     Account.instances["DE66100800000047114711"] = new Account(
@@ -121,11 +132,19 @@ Account.createTestData = function () {
             iban: "DE66100800000047114711",
             bankName: "Commerzbank Berlin",
             ownerName: "Erna Meier",
-            openDate: new Date(2013, 2, 21),
+            openDate: createDateAsUTC(new Date(2013, normalizeMonth(2), 22, 0, 0, 0)),
             currentBalance: 62.89
         });
     Account.saveAll();
 };
+
+// month in JS starts from 0
+// so we should pass month number - 1 , to have correct date
+// e.g January has number 1 but in JS it has number 0 etc.
+
+function normalizeMonth(month){
+    return month-1;
+}
 
 Account.clearData = function () {
     if (confirm("do you realy want to  delete all accounts data?")) {
@@ -133,11 +152,3 @@ Account.clearData = function () {
         localStorage.setItem("account", "{}");
     }
 };
-
-
-// Account.dateFormat=function dateToYMD(date) {
-//     var d = date.getDate();
-//     var m = date.getMonth() + 1; //Month from 0 to 11
-//     var y = date.getFullYear();
-//     return '' + y + '-' + (m<=9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);
-// }

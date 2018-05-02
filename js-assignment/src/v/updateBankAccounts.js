@@ -37,7 +37,7 @@ bA.v.updateBankAccount = {
             formEl.bankName.value = account.bankName;
             formEl.iban.value=account.iban;
             formEl.currentBalance.value =account.currentBalance;
-            formEl.openDate.value =bA.v.formatDate(account.openDate);;
+            formEl.openDate.value =bA.v.formatDate(account.openDate);
         } else {
             formEl.reset();
         }

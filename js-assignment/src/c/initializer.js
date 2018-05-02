@@ -8,21 +8,29 @@ var bA = { m:{}, v:{}, c:{} };
 
 Date.prototype.toFormattedString = function (f)
 {
-    var nm = this.getMonthName();
-    var nd = this.getDayName();
-    f = f.replace(/yyyy/g, this.getFullYear());
-    f = f.replace(/yy/g, String(this.getFullYear()).substr(2,2));
-    f = f.replace(/MMM/g, nm.substr(0,3).toUpperCase());
-    f = f.replace(/Mmm/g, nm.substr(0,3));
-    f = f.replace(/MM\*/g, nm.toUpperCase());
-    f = f.replace(/Mm\*/g, nm);
-    f = f.replace(/mm/g, String(this.getMonth()+1).padLeft('0',2));
-    f = f.replace(/DDD/g, nd.substr(0,3).toUpperCase());
-    f = f.replace(/Ddd/g, nd.substr(0,3));
-    f = f.replace(/DD\*/g, nd.toUpperCase());
-    f = f.replace(/Dd\*/g, nd);
-    f = f.replace(/dd/g, String(this.getDate()).padLeft('0',2));
-    f = f.replace(/d\*/g, this.getDate());
+    var monthName = this.getMonthName();
+    var month = this.getMonth();
+    var dayName = this.getDayName();
+    var year = this.getFullYear();
+    var date = this.getDate();
+
+    // Year patterns replacement
+    f = f.replace(/yyyy/g, year);
+    f = f.replace(/yy/g, String(year).substr(2,2));
+    // Month patterns replacement
+    f = f.replace(/MMM/g, monthName.substr(0,3).toUpperCase());
+    f = f.replace(/Mmm/g, monthName.substr(0,3));
+    f = f.replace(/MM\*/g, monthName.toUpperCase());
+    f = f.replace(/Mm\*/g, monthName);
+    f = f.replace(/mm/g, String(month+1).padLeft('0',2));
+    // Day patterns replacement
+    f = f.replace(/DDD/g, dayName.substr(0,3).toUpperCase());
+    f = f.replace(/Ddd/g, dayName.substr(0,3));
+    f = f.replace(/DD\*/g, dayName.toUpperCase());
+    f = f.replace(/Dd\*/g, dayName);
+    f = f.replace(/dd/g, String(date).padLeft('0',2));
+    f = f.replace(/d\*/g, date);
+
     return f;
 };
 Date.prototype.getMonthName = function ()
